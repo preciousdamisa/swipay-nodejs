@@ -6,7 +6,9 @@ import User from '../../models/user';
 import { validateSignupData, SignupData } from '../../models/user';
 import VerificationCode, {
   validatePhone,
+  sendResponse,
 } from '../../models/verification-code';
+import sendVerificationCode, { SendCodeRes } from './../../services/user';
 
 interface SignupResData {
   message: string;
@@ -55,30 +57,31 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
 
 export const getVerificationCode: RequestHandler<
   { phone: string },
-  { message: string },
-  { phone: string }
+  { message: string }
 > = async (req, res, next) => {
   const { error } = validatePhone(req.params);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
-  const { phone } = req.body;
+  let { phone } = req.params;
+  phone = '234' + phone.slice(1);
 
   const code = customAlphabet('0123456789', 6)();
-  const message = 'Verification code saved and sent successfully';
+  let sendCodeRes: SendCodeRes;
 
   try {
     const fetchedCode = await VerificationCode.findOne({ phone });
     if (fetchedCode) {
       await VerificationCode.updateOne({ phone }, { $set: { code } });
-      return res.status(201).send({ message });
 
-      // Call utils function to Send verification code to user.
+      sendCodeRes = await sendVerificationCode(phone, code);
+
+      return sendResponse(sendCodeRes, res);
     }
-
     await new VerificationCode({ phone, code }).save();
 
-    // Call utils function to Send verification code to user.
-    res.status(201).send({ message });
+    sendCodeRes = await sendVerificationCode(phone, code);
+
+    return sendResponse(sendCodeRes, res);
   } catch (e) {
     next(new Error('Error in generating verification code: ' + e));
   }

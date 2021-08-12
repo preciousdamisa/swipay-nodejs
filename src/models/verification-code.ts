@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
+import { Response } from 'express';
 import Joi from 'joi';
+
+import { SendCodeRes } from '../services/user';
 
 const schema = new Schema({
   phone: {
@@ -30,4 +33,12 @@ export function validatePhone(data: { phone: string }) {
       .regex(new RegExp('^[0-9]*$'))
       .required(),
   }).validate(data);
+}
+
+export function sendResponse(sendCodeRes: SendCodeRes, res: Response) {
+  if (sendCodeRes.status === 1) {
+    res.status(500).send({ message: sendCodeRes.message });
+  } else {
+    res.status(201).send({ message: sendCodeRes.message });
+  }
 }
