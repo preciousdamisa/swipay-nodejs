@@ -4,12 +4,22 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon dist/app.js"
+    "test": "jest --watchAll --verbose",
+    "start": "node dist/app.js"
   },
-  "keywords": [],
-  "author": "",
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Itiode/swipay-nodejs.git"
+  },
+  "author": "Precious Damisa",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Itiode/swipay-nodejs/issues"
+  },
+  "homepage": "https://github.com/Itiode/swipay-nodejs#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "config": "^3.3.6",
