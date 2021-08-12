@@ -1,0 +1,4 @@
+{
+  "dbUrl": "swimpay_dbUrl",
+  "jwtAuthPrivateKey": "swimpay_jwtAuthPrivateKey"
+}

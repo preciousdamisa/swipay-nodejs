@@ -1,0 +1,5 @@
+{
+  "port": "3100",
+  "dbUrl": "mongodb://localhost:27017/test",
+  "jwtAuthPrivateKey": "unsecureJwtAuthPrivateKey"
+}

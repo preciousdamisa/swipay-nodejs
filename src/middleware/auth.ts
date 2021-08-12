@@ -1,0 +1,18 @@
+import * as jwt from 'jsonwebtoken';
+import config from 'config';
+
+export default (req, res, next) => {
+  const token = req.header('x-auth-token');
+  if (!token)
+    return res
+      .status(401)
+      .send({ message: 'Access denied! No authorization token provided.' });
+
+  try {
+    const decoded = jwt.verify(token, config.get('jwtAuthPrivateKey'));
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).send({ message: 'Authorization token: ' + err.message });
+  }
+};
