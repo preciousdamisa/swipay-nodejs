@@ -1,4 +1,5 @@
 {
-  "dbUrl": "swimpay_dbUrl",
-  "jwtAuthPrivateKey": "swimpay_jwtAuthPrivateKey"
+  "dbUrl": "swipay_dbUrl",
+  "jwtAuthPrivateKey": "swipay_jwtAuthPrivateKey",
+  "paystackSecretKey": "swipay_paystackSecretKey"
 }

@@ -1,4 +1,7 @@
 import axios from 'axios';
+import config from 'config';
+
+import { KYCData } from '../models/user';
 
 export interface SendCodeRes {
   message: string;
@@ -6,7 +9,7 @@ export interface SendCodeRes {
   error?: {};
 }
 
-export default async function sendVerificationCode(
+export async function sendVerificationCode(
   phone: string,
   verificationCode: string
 ): Promise<SendCodeRes> {
@@ -26,5 +29,24 @@ export default async function sendVerificationCode(
     return { message: 'Verification code sent successfully', status: 0 };
   } catch (e) {
     return { message: 'Error in sending verification code', status: 1 };
+  }
+}
+
+interface CheckKYCDataResponse {
+  message: string;
+  status: number;
+}
+
+export async function checkKYCData(
+  data: KYCData
+): Promise<CheckKYCDataResponse> {
+  try {
+    const res = await axios.post('https://api.paystack.co/bvn/match', data, {
+      headers: { Authorization: 'Bearer <SecKey>' },
+    });
+
+    return { message: '', status: 0 };
+  } catch (e) {
+    return { message: '', status: 1 };
   }
 }

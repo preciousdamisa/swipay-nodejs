@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from 'mongoose';
+import config from 'config';
 
-const url = 'mongodb://localhost:27017/swipay';
+const url = config.get('dbUrl');
 export default (cb: (db: Mongoose | null, err: Error | null) => void) => {
   mongoose
     .connect(url, {

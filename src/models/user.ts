@@ -108,3 +108,22 @@ export function validateAuthData(data: AuthData) {
 
   return schema.validate(data);
 }
+
+export interface KYCData {
+  firstName: string;
+  lastName: string;
+  bvn: string;
+  accountNumber: string;
+  bankCode: string;
+}
+export function validateKYCData(data: KYCData) {
+  const schema = Joi.object({
+    firstName: Joi.string().trim().min(2).max(25).required(),
+    lastName: Joi.string().trim().min(2).max(25).required(),
+    bvn: Joi.string().trim().min(11).max(11).required(),
+    accountNumber: Joi.string().trim().min(10).max(10).required(),
+    bankCode: Joi.string().trim().min(3).max(3).required(),
+  });
+
+  return schema.validate(data);
+}

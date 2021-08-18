@@ -2,13 +2,21 @@ import bcrypt from 'bcrypt';
 import { RequestHandler } from 'express';
 import { customAlphabet } from 'nanoid';
 
-import User from '../../models/user';
-import { validateSignupData, SignupData } from '../../models/user';
+import User, {
+  validateSignupData,
+  SignupData,
+  validateKYCData,
+  KYCData,
+} from '../../models/user';
 import VerificationCode, {
   validatePhone,
   sendResponse,
 } from '../../models/verification-code';
-import sendVerificationCode, { SendCodeRes } from './../../services/user';
+import {
+  sendVerificationCode,
+  SendCodeRes,
+  checkKYCData,
+} from './../../services/user';
 
 interface SignupResData {
   message: string;
@@ -84,5 +92,20 @@ export const getVerificationCode: RequestHandler<
     return sendResponse(sendCodeRes, res);
   } catch (e) {
     next(new Error('Error in generating verification code: ' + e));
+  }
+};
+
+export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
+  req,
+  res,
+  next
+) => {
+  const { error } = validateKYCData(req.body);
+  if (error) return res.status(422).send({ message: error.details[0].message });
+
+  try {
+    const response = await checkKYCData(req.body);
+  } catch (e) {
+    next(new Error("Error in verifying user's data: " + e));
   }
 };

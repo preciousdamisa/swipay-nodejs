@@ -1,5 +1,6 @@
 {
   "port": "3100",
-  "dbUrl": "mongodb://localhost:27017/swimpay",
-  "jwtAuthPrivateKey": "unsecureJwtAuthPrivateKey"
+  "dbUrl": "mongodb://localhost:27017/swipay",
+  "jwtAuthPrivateKey": "unsecureJwtAuthPrivateKey",
+  "paystackSecretKey": ""
 }
