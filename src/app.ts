@@ -11,7 +11,7 @@ import walletRoutes from './routes/wallets';
 
 const app = express();
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoute);
