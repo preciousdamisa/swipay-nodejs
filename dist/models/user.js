@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateAuthData = exports.validateSignupData = void 0;
+exports.validateKYCData = exports.validateAuthData = exports.validateSignupData = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const config_1 = __importDefault(require("config"));
 const Jwt = __importStar(require("jsonwebtoken"));
@@ -55,9 +55,6 @@ const schema = new mongoose_1.Schema({
     dob: {
         date: Date,
         age: { type: Number, min: 13 },
-    },
-    bankDetails: {
-        bvn: { type: String, minLength: 5, maxLength: 20, trim: true },
     },
 }, { timestamps: true });
 schema.methods.genAuthToken = function () {
@@ -98,3 +95,14 @@ function validateAuthData(data) {
     return schema.validate(data);
 }
 exports.validateAuthData = validateAuthData;
+function validateKYCData(data) {
+    const schema = joi_1.default.object({
+        firstName: joi_1.default.string().trim().min(2).max(25).required(),
+        lastName: joi_1.default.string().trim().min(2).max(25).required(),
+        bvn: joi_1.default.string().trim().min(11).max(11).required(),
+        accountNumber: joi_1.default.string().trim().min(10).max(10).required(),
+        bankCode: joi_1.default.string().trim().min(3).max(3).required(),
+    });
+    return schema.validate(data);
+}
+exports.validateKYCData = validateKYCData;

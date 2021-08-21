@@ -22,14 +22,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getVerificationCode = exports.addUser = void 0;
+exports.verifyKYCData = exports.getVerificationCode = exports.addUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nanoid_1 = require("nanoid");
-const user_1 = __importDefault(require("../../models/user"));
-const user_2 = require("../../models/user");
+const user_1 = __importStar(require("../../models/user"));
 const verification_code_1 = __importStar(require("../../models/verification-code"));
+const user_2 = require("./../../services/user");
 const addUser = async (req, res, next) => {
-    const { error } = user_2.validateSignupData(req.body);
+    const { error } = user_1.validateSignupData(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     const { phone, email, password } = req.body;
@@ -59,25 +59,38 @@ const addUser = async (req, res, next) => {
 };
 exports.addUser = addUser;
 const getVerificationCode = async (req, res, next) => {
-    const { error } = verification_code_1.validatePhone(req.body);
+    const { error } = verification_code_1.validatePhone(req.params);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
-    const { phone } = req.body;
+    let { phone } = req.params;
+    phone = '234' + phone.slice(1);
     const code = nanoid_1.customAlphabet('0123456789', 6)();
-    const message = 'Verification code saved and sent successfully';
+    let sendCodeRes;
     try {
         const fetchedCode = await verification_code_1.default.findOne({ phone });
         if (fetchedCode) {
             await verification_code_1.default.updateOne({ phone }, { $set: { code } });
-            return res.status(201).send({ message });
-            // Call utils function to Send verification code to user.
+            sendCodeRes = await user_2.sendVerificationCode(phone, code);
+            return verification_code_1.sendResponse(sendCodeRes, res);
         }
         await new verification_code_1.default({ phone, code }).save();
-        // Call utils function to Send verification code to user.
-        res.status(201).send({ message });
+        sendCodeRes = await user_2.sendVerificationCode(phone, code);
+        return verification_code_1.sendResponse(sendCodeRes, res);
     }
     catch (e) {
         next(new Error('Error in generating verification code: ' + e));
     }
 };
 exports.getVerificationCode = getVerificationCode;
+const verifyKYCData = async (req, res, next) => {
+    const { error } = user_1.validateKYCData(req.body);
+    if (error)
+        return res.status(422).send({ message: error.details[0].message });
+    try {
+        const response = await user_2.checkKYCData(req.body);
+    }
+    catch (e) {
+        next(new Error("Error in verifying user's data: " + e));
+    }
+};
+exports.verifyKYCData = verifyKYCData;

@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePhone = void 0;
+exports.sendResponse = exports.validatePhone = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const schema = new mongoose_1.Schema({
@@ -44,11 +44,22 @@ const schema = new mongoose_1.Schema({
 });
 exports.default = mongoose_1.default.model('Verification-Code', schema);
 function validatePhone(data) {
-    return joi_1.default.object({ phone: joi_1.default.string()
+    return joi_1.default.object({
+        phone: joi_1.default.string()
             .trim()
             .min(11)
             .max(11)
             .regex(new RegExp('^[0-9]*$'))
-            .required() }).validate(data);
+            .required(),
+    }).validate(data);
 }
 exports.validatePhone = validatePhone;
+function sendResponse(sendCodeRes, res) {
+    if (sendCodeRes.status === 1) {
+        res.status(500).send({ message: sendCodeRes.message });
+    }
+    else {
+        res.status(201).send({ message: sendCodeRes.message });
+    }
+}
+exports.sendResponse = sendResponse;

@@ -8,5 +8,6 @@ const router = express_1.default();
 const user_1 = require("../../controllers/user/user");
 const user_2 = require("../../controllers/user/user");
 router.post('/', user_1.addUser);
-router.get('/verification-code', user_2.getVerificationCode);
+router.get('/verification-code/:phone', user_2.getVerificationCode);
+router.post('/kyc-verification', user_2.verifyKYCData);
 exports.default = router;
