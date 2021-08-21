@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyKYCData = exports.getVerificationCode = exports.addUser = void 0;
+exports.verifyKYCData = exports.verifyCode = exports.getVerificationCode = exports.addUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nanoid_1 = require("nanoid");
 const user_1 = __importStar(require("../../models/user"));
@@ -75,13 +75,30 @@ const getVerificationCode = async (req, res, next) => {
         }
         await new verification_code_1.default({ phone, code }).save();
         sendCodeRes = await user_2.sendVerificationCode(phone, code);
-        return verification_code_1.sendResponse(sendCodeRes, res);
+        verification_code_1.sendResponse(sendCodeRes, res);
     }
     catch (e) {
         next(new Error('Error in generating verification code: ' + e));
     }
 };
 exports.getVerificationCode = getVerificationCode;
+const verifyCode = async (req, res, next) => {
+    const { error } = verification_code_1.validateCode(req.body.code);
+    if (error)
+        return res.status(422).send({ message: error.details[0].message });
+    try {
+        const fetchedCode = await verification_code_1.default.findOne({
+            phone: req.body.phone,
+        });
+        if (!fetchedCode)
+            return res.status(404).send({ message: 'Verification code not found' });
+        res.send({ message: 'Code verification successful' });
+    }
+    catch (e) {
+        next(new Error('Error in verifying code: ' + e));
+    }
+};
+exports.verifyCode = verifyCode;
 const verifyKYCData = async (req, res, next) => {
     const { error } = user_1.validateKYCData(req.body);
     if (error)

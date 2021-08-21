@@ -35,6 +35,18 @@ export function validatePhone(data: { phone: string }) {
   }).validate(data);
 }
 
+export function validateCode(data: { phone: string; code: string }) {
+  return Joi.object({
+    phone: Joi.string()
+      .trim()
+      .min(11)
+      .max(11)
+      .regex(new RegExp('^[0-9]*$'))
+      .required(),
+    code: Joi.string().trim().min(6).max(6).required(),
+  }).validate(data);
+}
+
 export function sendResponse(sendCodeRes: SendCodeRes, res: Response) {
   if (sendCodeRes.status === 1) {
     res.status(500).send({ message: sendCodeRes.message });

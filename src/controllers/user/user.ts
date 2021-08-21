@@ -10,6 +10,7 @@ import User, {
 } from '../../models/user';
 import VerificationCode, {
   validatePhone,
+  validateCode,
   sendResponse,
 } from '../../models/verification-code';
 import {
@@ -89,9 +90,26 @@ export const getVerificationCode: RequestHandler<
 
     sendCodeRes = await sendVerificationCode(phone, code);
 
-    return sendResponse(sendCodeRes, res);
+    sendResponse(sendCodeRes, res);
   } catch (e) {
     next(new Error('Error in generating verification code: ' + e));
+  }
+};
+
+export const verifyCode: RequestHandler<any> = async (req, res, next) => {
+  const { error } = validateCode(req.body.code);
+  if (error) return res.status(422).send({ message: error.details[0].message });
+
+  try {
+    const fetchedCode = await VerificationCode.findOne({
+      phone: req.body.phone,
+    });
+    if (!fetchedCode)
+      return res.status(404).send({ message: 'Verification code not found' });
+
+    res.send({ message: 'Code verification successful' });
+  } catch (e) {
+    next(new Error('Error in verifying code: ' + e));
   }
 };
 
