@@ -1,7 +1,7 @@
 import mongoose, { Mongoose } from 'mongoose';
 import config from 'config';
 
-const url = config.get('dbUrl');
+const url = config.get('dbUrl') as string;
 export default (cb: (db: Mongoose | null, err: Error | null) => void) => {
   mongoose
     .connect(url, {
