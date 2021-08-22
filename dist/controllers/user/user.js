@@ -89,6 +89,7 @@ const verifyCode = async (req, res, next) => {
     try {
         const fetchedCode = await verification_code_1.default.findOne({
             phone: req.body.phone,
+            code: req.body.code,
         });
         if (!fetchedCode)
             return res.status(404).send({ message: 'Verification code not found' });

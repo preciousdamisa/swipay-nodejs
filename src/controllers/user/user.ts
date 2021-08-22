@@ -103,6 +103,7 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
   try {
     const fetchedCode = await VerificationCode.findOne({
       phone: req.body.phone,
+      code: req.body.code,
     });
     if (!fetchedCode)
       return res.status(404).send({ message: 'Verification code not found' });
