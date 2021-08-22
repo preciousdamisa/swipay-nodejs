@@ -93,7 +93,7 @@ const verifyCode = async (req, res, next) => {
         });
         if (!fetchedCode)
             return res.status(404).send({ message: 'Verification code not found' });
-        res.send({ message: 'Code verification successful' });
+        res.send({ message: 'Verified code successfully' });
     }
     catch (e) {
         next(new Error('Error in verifying code: ' + e));
