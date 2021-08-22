@@ -83,7 +83,7 @@ const getVerificationCode = async (req, res, next) => {
 };
 exports.getVerificationCode = getVerificationCode;
 const verifyCode = async (req, res, next) => {
-    const { error } = verification_code_1.validateCode(req.body.code);
+    const { error } = verification_code_1.validateCode(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     try {

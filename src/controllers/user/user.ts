@@ -97,7 +97,7 @@ export const getVerificationCode: RequestHandler<
 };
 
 export const verifyCode: RequestHandler<any> = async (req, res, next) => {
-  const { error } = validateCode(req.body.code);
+  const { error } = validateCode(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
   try {
