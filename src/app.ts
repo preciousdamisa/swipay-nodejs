@@ -1,9 +1,10 @@
 import express from 'express';
 import { Mongoose } from 'mongoose';
 import config from 'config';
+import cors from 'cors';
 
 import error from './middleware/error';
-import connectToDB from './start/db';
+import connectToDB from './main/db';
 
 import userRoutes from './routes/user/users';
 import authRoute from './routes/user/auth';
@@ -11,6 +12,7 @@ import walletRoutes from './routes/wallets';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
