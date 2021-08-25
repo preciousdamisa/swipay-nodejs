@@ -32,16 +32,20 @@ const addUser = async (req, res, next) => {
     const { error } = user_1.validateSignupData(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
-    const { phone, email, password } = req.body;
+    const { email, phone, password, refCode } = req.body;
     try {
         const fetchedUser = await user_1.default.findOne({ $or: [{ phone }, { email }] });
         if (fetchedUser)
             return res.status(400).send({ message: 'User already registered' });
+        const referrer = await user_1.default.findOne({ referralCode: refCode });
+        if (!referrer)
+            return res.status(400).send({ message: 'No user with this referral code' });
         const hashedPw = await bcrypt_1.default.hash(password, 12);
         const user = await new user_1.default({
             phone,
             email,
             password: hashedPw,
+            referrer: { code: refCode, userId: referrer._id },
             balance: 0.0,
         }).save();
         res.status(201).send({

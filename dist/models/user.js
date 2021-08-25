@@ -56,6 +56,16 @@ const schema = new mongoose_1.Schema({
         date: Date,
         age: { type: Number, min: 13 },
     },
+    referrer: {
+        code: {
+            type: String,
+            trim: true,
+            minLength: 6,
+            maxLength: 6,
+            required: true,
+        },
+        userId: mongoose_1.Schema.Types.ObjectId,
+    },
 }, { timestamps: true });
 schema.methods.genAuthToken = function () {
     return Jwt.sign({
@@ -79,6 +89,7 @@ function validateSignupData(data) {
             .email({ minDomainSegments: 2 })
             .required(),
         password: joi_1.default.string().trim().min(6).max(50).required(),
+        refCode: joi_1.default.string().trim().min(6).max(6).required(),
     });
     return schema.validate(data);
 }

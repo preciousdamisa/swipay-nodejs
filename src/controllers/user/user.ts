@@ -36,18 +36,23 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
   const { error } = validateSignupData(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
-  const { phone, email, password } = req.body;
+  const { email, phone, password, refCode } = req.body;
 
   try {
     const fetchedUser = await User.findOne({ $or: [{ phone }, { email }] });
     if (fetchedUser)
       return res.status(400).send({ message: 'User already registered' });
 
+      const referrer = await User.findOne({referralCode: refCode});
+      if (!referrer) return res.status(400).send({message: 'No user with this referral code'});
+
     const hashedPw = await bcrypt.hash(password, 12);
+    
     const user = await new User({
       phone,
       email,
       password: hashedPw,
+      referrer: {code: refCode, userId: referrer._id},
       balance: 0.0,
     }).save();
 

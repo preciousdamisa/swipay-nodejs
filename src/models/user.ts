@@ -18,6 +18,7 @@ interface User {
   panicPin: string;
   address: Address;
   dob: { date: Date; age: number };
+  referrer: { code: string; userId: string };
 }
 
 const schema = new Schema<User>(
@@ -48,6 +49,16 @@ const schema = new Schema<User>(
       date: Date,
       age: { type: Number, min: 13 },
     },
+    referrer: {
+      code: {
+        type: String,
+        trim: true,
+        minLength: 6,
+        maxLength: 6,
+        required: true,
+      },
+      userId: Schema.Types.ObjectId,
+    },
   },
   { timestamps: true }
 );
@@ -70,6 +81,7 @@ export interface SignupData {
   email: string;
   phone: string;
   password: string;
+  refCode: string;
 }
 
 export function validateSignupData(data: SignupData) {
@@ -86,6 +98,7 @@ export function validateSignupData(data: SignupData) {
       .email({ minDomainSegments: 2 })
       .required(),
     password: Joi.string().trim().min(6).max(50).required(),
+    refCode: Joi.string().trim().min(6).max(6).required(),
   });
 
   return schema.validate(data);
