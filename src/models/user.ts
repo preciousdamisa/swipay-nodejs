@@ -24,17 +24,19 @@ interface User {
 const schema = new Schema<User>(
   {
     name: { type: nameSchema },
-    phone: {
-      type: String,
-      required: true,
-      unique: true,
-      minLength: 11,
-      maxLength: 11,
-    },
     email: {
       type: String,
+      trim: true,
       minLength: 5,
       maxLength: 250,
+      unique: true,
+      required: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      minLength: 11,
+      maxLength: 11,
       unique: true,
       required: true,
     },
@@ -86,16 +88,16 @@ export interface SignupData {
 
 export function validateSignupData(data: SignupData) {
   const schema = Joi.object({
+    email: Joi.string()
+      .min(5)
+      .max(250)
+      .email({ minDomainSegments: 2 })
+      .required(),
     phone: Joi.string()
       .trim()
       .min(11)
       .max(11)
       .regex(new RegExp('^[0-9]*$'))
-      .required(),
-    email: Joi.string()
-      .min(5)
-      .max(250)
-      .email({ minDomainSegments: 2 })
       .required(),
     password: Joi.string().trim().min(6).max(50).required(),
     refCode: Joi.string().trim().min(6).max(6).required(),

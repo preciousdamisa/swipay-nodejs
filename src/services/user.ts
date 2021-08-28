@@ -41,12 +41,25 @@ export async function checkKYCData(
   data: KYCData
 ): Promise<CheckKYCDataResponse> {
   try {
-    const res = await axios.post('https://api.paystack.co/bvn/match', data, {
-      headers: { Authorization: 'Bearer <SecKey>' },
-    });
+    const res = await axios.post(
+      'https://api.paystack.co/bvn/match',
+      {
+        bvn: data.bvn,
+        account_number: data.accountNumber,
+        bank_code: data.bankCode,
+        first_name: data.firstName,
+        last_name: data.lastName,
+      },
+      {
+        headers: { Authorization: `Bearer ${config.get('paystackSecretKey')}` },
+      }
+    );
 
-    return { message: '', status: 0 };
-  } catch (e) {
-    return { message: '', status: 1 };
+    return { message: res.data.message, status: res.data.status };
+  } catch (err) {
+    return {
+      message: err.response.data.message,
+      status: err.response.data.status,
+    };
   }
 }

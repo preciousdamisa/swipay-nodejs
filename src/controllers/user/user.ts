@@ -43,16 +43,19 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
     if (fetchedUser)
       return res.status(400).send({ message: 'User already registered' });
 
-      const referrer = await User.findOne({referralCode: refCode});
-      if (!referrer) return res.status(400).send({message: 'No user with this referral code'});
+    const referrer = await User.findOne({ referralCode: refCode });
+    if (!referrer)
+      return res
+        .status(400)
+        .send({ message: 'No user with this referral code' });
 
     const hashedPw = await bcrypt.hash(password, 12);
-    
+
     const user = await new User({
-      phone,
       email,
+      phone,
       password: hashedPw,
-      referrer: {code: refCode, userId: referrer._id},
+      referrer: { code: refCode, userId: referrer._id },
       balance: 0.0,
     }).save();
 
@@ -110,8 +113,7 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
       phone: req.body.phone,
       code: req.body.code,
     });
-    if (!fetchedCode)
-      return res.status(404).send({ message: 'Verification code not found' });
+    if (!fetchedCode) return res.status(404).send({ message: '' });
 
     res.send({ message: 'Verified code successfully' });
   } catch (e) {
@@ -129,7 +131,14 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
 
   try {
     const response = await checkKYCData(req.body);
+    if (response.status) {
+      res.send({ message: 'Verification successful' });
+    } else {
+      res.status(400).send({
+        message: 'Invalid data! Please ensure all provided data is correct',
+      });
+    }
   } catch (e) {
-    next(new Error("Error in verifying user's data: " + e));
+    next(new Error('Error in verifying data: ' + e));
   }
 };

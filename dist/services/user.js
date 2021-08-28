@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkKYCData = exports.sendVerificationCode = void 0;
 const axios_1 = __importDefault(require("axios"));
+const config_1 = __importDefault(require("config"));
 async function sendVerificationCode(phone, verificationCode) {
     try {
         const res = await axios_1.default.post('https://termii.com/api/sms/send', {
@@ -26,13 +27,22 @@ async function sendVerificationCode(phone, verificationCode) {
 exports.sendVerificationCode = sendVerificationCode;
 async function checkKYCData(data) {
     try {
-        const res = await axios_1.default.post('https://api.paystack.co/bvn/match', data, {
-            headers: { Authorization: 'Bearer <SecKey>' },
+        const res = await axios_1.default.post('https://api.paystack.co/bvn/match', {
+            bvn: data.bvn,
+            account_number: data.accountNumber,
+            bank_code: data.bankCode,
+            first_name: data.firstName,
+            last_name: data.lastName,
+        }, {
+            headers: { Authorization: `Bearer ${config_1.default.get('paystackSecretKey')}` },
         });
-        return { message: '', status: 0 };
+        return { message: res.data.message, status: res.data.status };
     }
-    catch (e) {
-        return { message: '', status: 1 };
+    catch (err) {
+        return {
+            message: err.response.data.message,
+            status: err.response.data.status,
+        };
     }
 }
 exports.checkKYCData = checkKYCData;

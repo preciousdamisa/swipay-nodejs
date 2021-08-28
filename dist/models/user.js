@@ -31,17 +31,19 @@ const name_1 = __importDefault(require("./schemas/name"));
 const address_1 = __importDefault(require("./schemas/address"));
 const schema = new mongoose_1.Schema({
     name: { type: name_1.default },
-    phone: {
-        type: String,
-        required: true,
-        unique: true,
-        minLength: 11,
-        maxLength: 11,
-    },
     email: {
         type: String,
+        trim: true,
         minLength: 5,
         maxLength: 250,
+        unique: true,
+        required: true,
+    },
+    phone: {
+        type: String,
+        trim: true,
+        minLength: 11,
+        maxLength: 11,
         unique: true,
         required: true,
     },
@@ -77,16 +79,16 @@ schema.methods.genAuthToken = function () {
 exports.default = mongoose_1.default.model('user', schema);
 function validateSignupData(data) {
     const schema = joi_1.default.object({
+        email: joi_1.default.string()
+            .min(5)
+            .max(250)
+            .email({ minDomainSegments: 2 })
+            .required(),
         phone: joi_1.default.string()
             .trim()
             .min(11)
             .max(11)
             .regex(new RegExp('^[0-9]*$'))
-            .required(),
-        email: joi_1.default.string()
-            .min(5)
-            .max(250)
-            .email({ minDomainSegments: 2 })
             .required(),
         password: joi_1.default.string().trim().min(6).max(50).required(),
         refCode: joi_1.default.string().trim().min(6).max(6).required(),

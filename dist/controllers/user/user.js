@@ -39,11 +39,13 @@ const addUser = async (req, res, next) => {
             return res.status(400).send({ message: 'User already registered' });
         const referrer = await user_1.default.findOne({ referralCode: refCode });
         if (!referrer)
-            return res.status(400).send({ message: 'No user with this referral code' });
+            return res
+                .status(400)
+                .send({ message: 'No user with this referral code' });
         const hashedPw = await bcrypt_1.default.hash(password, 12);
         const user = await new user_1.default({
-            phone,
             email,
+            phone,
             password: hashedPw,
             referrer: { code: refCode, userId: referrer._id },
             balance: 0.0,
@@ -96,7 +98,7 @@ const verifyCode = async (req, res, next) => {
             code: req.body.code,
         });
         if (!fetchedCode)
-            return res.status(404).send({ message: 'Verification code not found' });
+            return res.status(404).send({ message: '' });
         res.send({ message: 'Verified code successfully' });
     }
     catch (e) {
@@ -110,9 +112,17 @@ const verifyKYCData = async (req, res, next) => {
         return res.status(422).send({ message: error.details[0].message });
     try {
         const response = await user_2.checkKYCData(req.body);
+        if (response.status) {
+            res.send({ message: 'Verification successful' });
+        }
+        else {
+            res.status(400).send({
+                message: 'Invalid data! Please ensure all provided data is correct',
+            });
+        }
     }
     catch (e) {
-        next(new Error("Error in verifying user's data: " + e));
+        next(new Error('Error in verifying data: ' + e));
     }
 };
 exports.verifyKYCData = verifyKYCData;
