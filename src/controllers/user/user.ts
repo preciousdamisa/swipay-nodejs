@@ -142,6 +142,21 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
 
   const dob = new Date(+birthYear, +birthMonth - 1, +birthDay + 1, 0, 0, 0, 0);
 
+  const middleName = req.body.middleName;
+
+  await User.updateOne(
+    { _id: userId },
+    {
+      name: {
+        first: firstName,
+        middle: middleName === '' || middleName === undefined ? '' : middleName,
+        last: lastName,
+      },
+      externalBank: { name: bankName, accountNumber, bankCode },
+      'dob.date': dob,
+    }
+  );
+
   try {
     // const response = await checkKYCData(req.body);
     // if (response.status) {
@@ -152,23 +167,6 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
     //   });
     // }
 
-    const middleName = req.body.middleName;
-
-    const result = await User.updateOne(
-      { _id: userId },
-      {
-        name: {
-          first: firstName,
-          middle:
-            middleName === '' || middleName === undefined ? '' : middleName,
-          last: lastName,
-        },
-        externalBank: { name: bankName, accountNumber, bankCode },
-        'dob.date': dob,
-      }
-    );
-
-    console.log(result);
     res.send('Success');
   } catch (e) {
     next(new Error('Error in verifying data: ' + e));
