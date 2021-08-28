@@ -120,7 +120,7 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
   }
 };
 
-export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
+export const verifyKYCData: RequestHandler<any, {message: string}, KYCData> = async (
   req,
   res,
   next
@@ -167,7 +167,7 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
     //   });
     // }
 
-    res.send('Success');
+    res.send({message: 'Vefication successful'});
   } catch (e) {
     next(new Error('Error in verifying data: ' + e));
   }
