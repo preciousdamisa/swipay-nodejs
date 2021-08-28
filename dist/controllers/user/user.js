@@ -110,7 +110,7 @@ const verifyKYCData = async (req, res, next) => {
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     const { userId, firstName, lastName, bankName, accountNumber, bankCode, birthMonth, birthDay, birthYear, } = req.body;
-    const dob = new Date(+birthYear, +birthMonth - 1, +birthDay + 1, 0, 0, 0, 0);
+    const dob = new Date(+birthYear, +birthMonth - 1, +birthDay - 1, 0, 0, 0, 0);
     const middleName = req.body.middleName;
     try {
         await user_1.default.updateOne({ _id: userId }, {

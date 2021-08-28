@@ -140,7 +140,7 @@ export const verifyKYCData: RequestHandler<any, {message: string}, KYCData> = as
     birthYear,
   } = req.body;
 
-  const dob = new Date(+birthYear, +birthMonth - 1, +birthDay + 1, 0, 0, 0, 0);
+  const dob = new Date(+birthYear, +birthMonth - 1, +birthDay - 1, 0, 0, 0, 0);
 
   const middleName = req.body.middleName;
 
