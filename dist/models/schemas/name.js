@@ -5,5 +5,5 @@ exports.default = new mongoose_1.Schema({
     title: { type: String, maxLength: 25, trim: true },
     first: { type: String, maxLength: 25, trim: true, required: true },
     middle: { type: String, maxLength: 25, trim: true },
-    surname: { type: String, maxLength: 25, trim: true, required: true },
+    last: { type: String, maxLength: 25, trim: true, required: true },
 }, { _id: false });
