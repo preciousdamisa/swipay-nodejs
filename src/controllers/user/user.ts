@@ -144,20 +144,20 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
 
   const middleName = req.body.middleName;
 
-  await User.updateOne(
-    { _id: userId },
-    {
-      name: {
-        first: firstName,
-        middle: middleName === '' || middleName === undefined ? '' : middleName,
-        last: lastName,
-      },
-      externalBank: { name: bankName, accountNumber, bankCode },
-      'dob.date': dob,
-    }
-  );
-
   try {
+    await User.updateOne(
+      { _id: userId },
+      {
+        name: {
+          first: firstName,
+          middle:
+            middleName === '' || middleName === undefined ? '' : middleName,
+          last: lastName,
+        },
+        externalBank: { name: bankName, accountNumber, bankCode },
+        'dob.date': dob,
+      }
+    );
     // const response = await checkKYCData(req.body);
     // if (response.status) {
     //   res.send({ message: 'Verification successful' });
