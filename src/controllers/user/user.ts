@@ -167,7 +167,7 @@ export const verifyKYCData: RequestHandler<any, {message: string}, KYCData> = as
     //   });
     // }
 
-    res.send({message: 'Vefication successful'});
+    res.send({message: 'Verification successful'});
   } catch (e) {
     next(new Error('Error in verifying data: ' + e));
   }

@@ -130,7 +130,7 @@ const verifyKYCData = async (req, res, next) => {
         //     message: 'Invalid data! Please ensure all provided data is correct',
         //   });
         // }
-        res.send({ message: 'Vefication successful' });
+        res.send({ message: 'Verification successful' });
     }
     catch (e) {
         next(new Error('Error in verifying data: ' + e));
