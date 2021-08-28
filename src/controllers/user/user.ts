@@ -56,7 +56,6 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
       phone,
       password: hashedPw,
       referrer: { code: refCode, userId: referrer._id },
-      balance: 0.0,
     }).save();
 
     res.status(201).send({
@@ -129,15 +128,48 @@ export const verifyKYCData: RequestHandler<any, any, KYCData> = async (
   const { error } = validateKYCData(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
+  const {
+    userId,
+    firstName,
+    lastName,
+    bankName,
+    accountNumber,
+    bankCode,
+    birthMonth,
+    birthDay,
+    birthYear,
+  } = req.body;
+
+  const dob = new Date(+birthYear, +birthMonth - 1, +birthDay + 1, 0, 0, 0, 0);
+
   try {
-    const response = await checkKYCData(req.body);
-    if (response.status) {
-      res.send({ message: 'Verification successful' });
-    } else {
-      res.status(400).send({
-        message: 'Invalid data! Please ensure all provided data is correct',
-      });
-    }
+    // const response = await checkKYCData(req.body);
+    // if (response.status) {
+    //   res.send({ message: 'Verification successful' });
+    // } else {
+    //   res.status(400).send({
+    //     message: 'Invalid data! Please ensure all provided data is correct',
+    //   });
+    // }
+
+    const middleName = req.body.middleName;
+
+    const result = await User.updateOne(
+      { _id: userId },
+      {
+        name: {
+          first: firstName,
+          middle:
+            middleName === '' || middleName === undefined ? '' : middleName,
+          last: lastName,
+        },
+        externalBank: { name: bankName, accountNumber, bankCode },
+        'dob.date': dob,
+      }
+    );
+
+    console.log(result);
+    res.send('Success');
   } catch (e) {
     next(new Error('Error in verifying data: ' + e));
   }

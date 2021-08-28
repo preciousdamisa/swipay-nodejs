@@ -50,13 +50,9 @@ const schema = new mongoose_1.Schema({
     gender: { type: String, enum: ['male', 'female', 'other'] },
     picture: { large: String, medium: String, thumbnail: String },
     password: { type: String, trim: true, required: true },
-    balance: { type: Number, min: 0, max: 1000000000 },
-    transferPin: { type: String, trim: true },
-    panicPin: { type: String, trim: true },
     address: address_1.default,
     dob: {
         date: Date,
-        age: { type: Number, min: 13 },
     },
     referrer: {
         code: {
@@ -68,13 +64,18 @@ const schema = new mongoose_1.Schema({
         },
         userId: mongoose_1.Schema.Types.ObjectId,
     },
+    externalBank: {
+        name: { type: String, trim: true, minLength: 2, maxLength: 50 },
+        accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
+        bankCode: { type: String, trim: true, minLength: 3, maxLength: 3 },
+    },
 }, { timestamps: true });
 schema.methods.genAuthToken = function () {
     return Jwt.sign({
         id: this._id,
         phone: this.phone,
         email: this.email,
-    }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '12h' });
+    }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '1h' });
 };
 exports.default = mongoose_1.default.model('user', schema);
 function validateSignupData(data) {
@@ -110,11 +111,17 @@ function validateAuthData(data) {
 exports.validateAuthData = validateAuthData;
 function validateKYCData(data) {
     const schema = joi_1.default.object({
+        userId: joi_1.default.string().trim().required(),
         firstName: joi_1.default.string().trim().min(2).max(25).required(),
+        middleName: joi_1.default.string().trim().min(2).max(25),
         lastName: joi_1.default.string().trim().min(2).max(25).required(),
         bvn: joi_1.default.string().trim().min(11).max(11).required(),
+        bankName: joi_1.default.string().trim().min(2).max(50).required(),
         accountNumber: joi_1.default.string().trim().min(10).max(10).required(),
         bankCode: joi_1.default.string().trim().min(3).max(3).required(),
+        birthMonth: joi_1.default.string().trim().min(2).max(2).required(),
+        birthDay: joi_1.default.string().trim().min(2).max(2).required(),
+        birthYear: joi_1.default.string().trim().min(4).max(4).required(),
     });
     return schema.validate(data);
 }

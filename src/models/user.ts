@@ -13,12 +13,10 @@ interface User {
   gender: string;
   picture: { large: string; medium: string; thumbnail: string };
   password: string;
-  balance: number;
-  transferPin: string;
-  panicPin: string;
   address: Address;
-  dob: { date: Date; age: number };
+  dob: { date: Date };
   referrer: { code: string; userId: string };
+  externalBank: { name: string; accountNumber: string; bankCode: string };
 }
 
 const schema = new Schema<User>(
@@ -43,13 +41,9 @@ const schema = new Schema<User>(
     gender: { type: String, enum: ['male', 'female', 'other'] },
     picture: { large: String, medium: String, thumbnail: String },
     password: { type: String, trim: true, required: true },
-    balance: { type: Number, min: 0, max: 1000000000 },
-    transferPin: { type: String, trim: true },
-    panicPin: { type: String, trim: true },
     address: addressSchema,
     dob: {
       date: Date,
-      age: { type: Number, min: 13 },
     },
     referrer: {
       code: {
@@ -60,6 +54,11 @@ const schema = new Schema<User>(
         required: true,
       },
       userId: Schema.Types.ObjectId,
+    },
+    externalBank: {
+      name: { type: String, trim: true, minLength: 2, maxLength: 50 },
+      accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
+      bankCode: { type: String, trim: true, minLength: 3, maxLength: 3 },
     },
   },
   { timestamps: true }
@@ -73,7 +72,7 @@ schema.methods.genAuthToken = function () {
       email: this.email,
     },
     config.get('jwtAuthPrivateKey'),
-    { expiresIn: '12h' }
+    { expiresIn: '1h' }
   );
 };
 
@@ -125,19 +124,31 @@ export function validateAuthData(data: AuthData) {
 }
 
 export interface KYCData {
+  userId: string;
   firstName: string;
+  middleName: string;
   lastName: string;
   bvn: string;
+  bankName: string;
   accountNumber: string;
   bankCode: string;
+  birthMonth: string;
+  birthDay: string;
+  birthYear: string;
 }
 export function validateKYCData(data: KYCData) {
   const schema = Joi.object({
+    userId: Joi.string().trim().required(),
     firstName: Joi.string().trim().min(2).max(25).required(),
+    middleName: Joi.string().trim().min(2).max(25),
     lastName: Joi.string().trim().min(2).max(25).required(),
     bvn: Joi.string().trim().min(11).max(11).required(),
+    bankName: Joi.string().trim().min(2).max(50).required(),
     accountNumber: Joi.string().trim().min(10).max(10).required(),
     bankCode: Joi.string().trim().min(3).max(3).required(),
+    birthMonth: Joi.string().trim().min(2).max(2).required(),
+    birthDay: Joi.string().trim().min(2).max(2).required(),
+    birthYear: Joi.string().trim().min(4).max(4).required(),
   });
 
   return schema.validate(data);
