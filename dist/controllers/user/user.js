@@ -122,15 +122,15 @@ const verifyKYCData = async (req, res, next) => {
             externalBank: { name: bankName, accountNumber, bankCode },
             'dob.date': dob,
         });
-        // const response = await checkKYCData(req.body);
-        // if (response.status) {
-        //   res.send({ message: 'Verification successful' });
-        // } else {
-        //   res.status(400).send({
-        //     message: 'Invalid data! Please ensure all provided data is correct',
-        //   });
-        // }
-        res.send({ message: 'Verification successful' });
+        const response = await user_2.checkKYCData(req.body);
+        if (response.status) {
+            res.send({ message: 'Verification successful' });
+        }
+        else {
+            res.status(400).send({
+                message: 'Invalid data! Please ensure all provided data is correct',
+            });
+        }
     }
     catch (e) {
         next(new Error('Error in verifying data: ' + e));

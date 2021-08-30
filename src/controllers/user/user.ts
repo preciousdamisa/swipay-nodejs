@@ -112,7 +112,7 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
       phone: req.body.phone,
       code: req.body.code,
     });
-    if (!fetchedCode) return res.status(404).send({ message: '' });
+    if (!fetchedCode) return res.status(404).send({ message: 'Incorrect verification code' });
 
     res.send({ message: 'Verified code successfully' });
   } catch (e) {
@@ -164,7 +164,7 @@ export const verifyKYCData: RequestHandler<any, {message: string}, KYCData> = as
       res.send({ message: 'Verification successful' });
     } else {
       res.status(400).send({
-        message: 'Invalid data! Please ensure all provided data is correct',
+        message: 'Incorrect data! Please ensure all provided data is correct',
       });
     }
   } catch (e) {
