@@ -97,7 +97,7 @@ const verifyCode = async (req, res, next) => {
             code: req.body.code,
         });
         if (!fetchedCode)
-            return res.status(404).send({ message: '' });
+            return res.status(404).send({ message: 'Incorrect verification code' });
         res.send({ message: 'Verified code successfully' });
     }
     catch (e) {
@@ -128,7 +128,7 @@ const verifyKYCData = async (req, res, next) => {
         }
         else {
             res.status(400).send({
-                message: 'Invalid data! Please ensure all provided data is correct',
+                message: 'Incorrect data! Please ensure all provided data is correct',
             });
         }
     }
