@@ -12,7 +12,7 @@ export default (req, res, next) => {
     const decoded = jwt.verify(token, config.get('jwtAuthPrivateKey'));
     req.user = decoded;
     next();
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).send({ message: 'Authorization token: ' + err.message });
   }
 };

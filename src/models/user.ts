@@ -17,6 +17,7 @@ interface User {
   dob: { date: Date };
   referrer: { code: string; userId: string };
   externalBank: { name: string; accountNumber: string; bankCode: string };
+  walletId: string;
 }
 
 const schema = new Schema<User>(
@@ -60,6 +61,7 @@ const schema = new Schema<User>(
       accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
       bankCode: { type: String, trim: true, minLength: 3, maxLength: 3 },
     },
+    walletId: Schema.Types.ObjectId,
   },
   { timestamps: true }
 );

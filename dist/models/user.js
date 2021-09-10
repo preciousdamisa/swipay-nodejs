@@ -69,6 +69,7 @@ const schema = new mongoose_1.Schema({
         accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
         bankCode: { type: String, trim: true, minLength: 3, maxLength: 3 },
     },
+    walletId: mongoose_1.Schema.Types.ObjectId,
 }, { timestamps: true });
 schema.methods.genAuthToken = function () {
     return Jwt.sign({
