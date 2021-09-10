@@ -8,15 +8,15 @@ const config_1 = __importDefault(require("config"));
 const cors_1 = __importDefault(require("cors"));
 const error_1 = __importDefault(require("./middleware/error"));
 const db_1 = __importDefault(require("./main/db"));
-const users_1 = __importDefault(require("./routes/user/users"));
+const user_1 = __importDefault(require("./routes/user/user"));
 const auth_1 = __importDefault(require("./routes/user/auth"));
-const wallets_1 = __importDefault(require("./routes/wallets"));
+const wallet_1 = __importDefault(require("./routes/wallet"));
 const app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
-app.use('/api/users', users_1.default);
+app.use('/api/users', user_1.default);
 app.use('/api/auth', auth_1.default);
-app.use('/api/wallets', wallets_1.default);
+app.use('/api/wallets', wallet_1.default);
 app.use(error_1.default);
 db_1.default((db, err) => {
     if (!err) {

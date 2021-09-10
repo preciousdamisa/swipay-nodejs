@@ -52,6 +52,7 @@ const addUser = async (req, res, next) => {
         res.status(201).send({
             message: 'Signup successful!',
             user: {
+                id: user._id,
                 token: user.genAuthToken(),
                 email,
                 phone,
@@ -113,17 +114,17 @@ const verifyKYCData = async (req, res, next) => {
     const dob = new Date(+birthYear, +birthMonth - 1, +birthDay - 1, 0, 0, 0, 0);
     const middleName = req.body.middleName;
     try {
-        await user_1.default.updateOne({ _id: userId }, {
-            name: {
-                first: firstName,
-                middle: middleName === '' || middleName === undefined ? '' : middleName,
-                last: lastName,
-            },
-            externalBank: { name: bankName, accountNumber, bankCode },
-            'dob.date': dob,
-        });
         const response = await user_2.checkKYCData(req.body);
         if (response.status) {
+            await user_1.default.updateOne({ _id: userId }, {
+                name: {
+                    first: firstName,
+                    middle: middleName === '' || middleName === undefined ? '' : middleName,
+                    last: lastName,
+                },
+                externalBank: { name: bankName, accountNumber, bankCode },
+                'dob.date': dob,
+            });
             res.send({ message: 'Verification successful' });
         }
         else {

@@ -6,9 +6,9 @@ import cors from 'cors';
 import error from './middleware/error';
 import connectToDB from './main/db';
 
-import userRoutes from './routes/user/users';
+import userRoutes from './routes/user/user';
 import authRoute from './routes/user/auth';
-import walletRoutes from './routes/wallets';
+import walletRoutes from './routes/wallet';
 
 const app = express();
 

@@ -22,6 +22,7 @@ import {
 interface SignupResData {
   message: string;
   user?: {
+    id: string;
     token: string;
     email: string;
     phone: string;
@@ -61,6 +62,7 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
     res.status(201).send({
       message: 'Signup successful!',
       user: {
+        id: user._id,
         token: user.genAuthToken(),
         email,
         phone,
@@ -112,7 +114,8 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
       phone: req.body.phone,
       code: req.body.code,
     });
-    if (!fetchedCode) return res.status(404).send({ message: 'Incorrect verification code' });
+    if (!fetchedCode)
+      return res.status(404).send({ message: 'Incorrect verification code' });
 
     res.send({ message: 'Verified code successfully' });
   } catch (e) {
@@ -120,54 +123,59 @@ export const verifyCode: RequestHandler<any> = async (req, res, next) => {
   }
 };
 
-export const verifyKYCData: RequestHandler<any, {message: string}, KYCData> = async (
-  req,
-  res,
-  next
-) => {
-  const { error } = validateKYCData(req.body);
-  if (error) return res.status(422).send({ message: error.details[0].message });
+export const verifyKYCData: RequestHandler<any, { message: string }, KYCData> =
+  async (req, res, next) => {
+    const { error } = validateKYCData(req.body);
+    if (error)
+      return res.status(422).send({ message: error.details[0].message });
 
-  const {
-    userId,
-    firstName,
-    lastName,
-    bankName,
-    accountNumber,
-    bankCode,
-    birthMonth,
-    birthDay,
-    birthYear,
-  } = req.body;
+    const {
+      userId,
+      firstName,
+      lastName,
+      bankName,
+      accountNumber,
+      bankCode,
+      birthMonth,
+      birthDay,
+      birthYear,
+    } = req.body;
 
-  const dob = new Date(+birthYear, +birthMonth - 1, +birthDay - 1, 0, 0, 0, 0);
-
-  const middleName = req.body.middleName;
-
-  try {
-    await User.updateOne(
-      { _id: userId },
-      {
-        name: {
-          first: firstName,
-          middle:
-            middleName === '' || middleName === undefined ? '' : middleName,
-          last: lastName,
-        },
-        externalBank: { name: bankName, accountNumber, bankCode },
-        'dob.date': dob,
-      }
+    const dob = new Date(
+      +birthYear,
+      +birthMonth - 1,
+      +birthDay - 1,
+      0,
+      0,
+      0,
+      0
     );
 
-    const response = await checkKYCData(req.body);
-    if (response.status) {
-      res.send({ message: 'Verification successful' });
-    } else {
-      res.status(400).send({
-        message: 'Incorrect data! Please ensure all provided data is correct',
-      });
+    const middleName = req.body.middleName;
+
+    try {
+      const response = await checkKYCData(req.body);
+      if (response.status) {
+        await User.updateOne(
+          { _id: userId },
+          {
+            name: {
+              first: firstName,
+              middle:
+                middleName === '' || middleName === undefined ? '' : middleName,
+              last: lastName,
+            },
+            externalBank: { name: bankName, accountNumber, bankCode },
+            'dob.date': dob,
+          }
+        );
+        res.send({ message: 'Verification successful' });
+      } else {
+        res.status(400).send({
+          message: 'Incorrect data! Please ensure all provided data is correct',
+        });
+      }
+    } catch (e) {
+      next(new Error('Error in verifying data: ' + e));
     }
-  } catch (e) {
-    next(new Error('Error in verifying data: ' + e));
-  }
-};
+  };

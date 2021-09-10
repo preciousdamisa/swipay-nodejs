@@ -39,6 +39,7 @@ const auth = async (req, res, next) => {
         res.send({
             message: 'Login successful!',
             user: {
+                id: user._id,
                 token: user.genAuthToken(),
                 name: user.name,
                 email: user.email,
