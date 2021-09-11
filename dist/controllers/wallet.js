@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createWallet = void 0;
+exports.fundWallet = exports.createWallet = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importDefault(require("../models/user"));
 const wallet_1 = __importStar(require("../models/wallet"));
@@ -57,3 +57,6 @@ const createWallet = async (req, res, next) => {
     }
 };
 exports.createWallet = createWallet;
+const fundWallet = async (req, res, next) => {
+};
+exports.fundWallet = fundWallet;

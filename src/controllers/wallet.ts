@@ -53,3 +53,14 @@ export const createWallet: RequestHandler<
     next(new Error('Error in adding user: ' + e));
   }
 };
+
+interface FundWalletResponse {
+  message: string;
+  amount: number;
+  balance: number;
+  transactionId: string;
+}
+
+export const fundWallet: RequestHandler<any, FundWalletResponse> = async (req, res, next) => {
+  
+}

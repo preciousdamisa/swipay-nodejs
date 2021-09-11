@@ -7,7 +7,7 @@ interface Wallet {
   balance: number;
 }
 
-const schema = new Schema(
+const schema = new Schema<Wallet>(
   {
     userId: { type: Schema.Types.ObjectId, required: true, unique: true },
     transferPin: {
