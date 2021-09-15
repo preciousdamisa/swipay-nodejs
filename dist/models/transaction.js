@@ -18,8 +18,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateFinishTransactionReq = exports.validateStartTransactionReq = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const joi_1 = __importDefault(require("joi"));
 const schema = new mongoose_1.Schema({
     senderId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
     receiverId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
@@ -28,7 +33,22 @@ const schema = new mongoose_1.Schema({
     category: {
         type: String,
         trim: true,
-        enum: ['Funded Wallet', 'Airtime', 'Transportation', 'School Fee', 'Other'],
+        enum: ['Airtime', 'Transportation', 'School Fee', 'Other'],
     },
-});
+}, { timestamps: true });
 exports.default = mongoose_1.default.model('transaction', schema);
+function validateStartTransactionReq(reqBody) {
+    return joi_1.default.object({
+        receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),
+    }).validate(reqBody);
+}
+exports.validateStartTransactionReq = validateStartTransactionReq;
+function validateFinishTransactionReq(reqBody) {
+    const schema = joi_1.default.object({
+        receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),
+        amount: joi_1.default.number().min(1.0).max(10000).required(),
+        transferPin: joi_1.default.string().trim().min(4).max(4).required(),
+    });
+    return schema.validate(reqBody);
+}
+exports.validateFinishTransactionReq = validateFinishTransactionReq;

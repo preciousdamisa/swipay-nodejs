@@ -27,7 +27,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importDefault(require("../models/user"));
 const wallet_1 = __importStar(require("../models/wallet"));
 const createWallet = async (req, res, next) => {
-    const { error } = wallet_1.validateCreateWalletData(req.body);
+    const { error } = wallet_1.validateCreateWalletReq(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     const { transferPin } = req.body;
@@ -57,6 +57,5 @@ const createWallet = async (req, res, next) => {
     }
 };
 exports.createWallet = createWallet;
-const fundWallet = async (req, res, next) => {
-};
+const fundWallet = async (req, res, next) => { };
 exports.fundWallet = fundWallet;

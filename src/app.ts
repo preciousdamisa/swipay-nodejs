@@ -9,6 +9,7 @@ import connectToDB from './main/db';
 import userRoutes from './routes/user/user';
 import authRoute from './routes/user/auth';
 import walletRoutes from './routes/wallet';
+import transactionRoutes from './routes/transaction';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoute);
 app.use('/api/wallets', walletRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.use(error);
 

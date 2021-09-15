@@ -22,11 +22,11 @@ const schema = new Schema<Wallet>(
 
 export default mongoose.model('wallet', schema);
 
-export interface CreateWalletData {
+export interface CreateWalletReq {
   transferPin: string;
 }
 
-export function validateCreateWalletData(data: CreateWalletData) {
+export function validateCreateWalletReq(data: CreateWalletReq) {
   const schema = Joi.object({
     transferPin: Joi.string().trim().min(4).max(4).required(),
   });

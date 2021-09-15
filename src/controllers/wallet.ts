@@ -3,23 +3,24 @@ import { RequestHandler } from 'express';
 
 import User from '../models/user';
 import Wallet, {
-  validateCreateWalletData,
-  CreateWalletData,
+  validateCreateWalletReq,
+  CreateWalletReq,
 } from '../models/wallet';
 
-interface CreateWalletResponse {
+interface CreateWalletRes {
   message: string;
   wallet?: {
     id: string;
   };
 }
 
+
 export const createWallet: RequestHandler<
   any,
-  CreateWalletResponse,
-  CreateWalletData
+  CreateWalletRes,
+  CreateWalletReq
 > = async (req, res, next) => {
-  const { error } = validateCreateWalletData(req.body);
+  const { error } = validateCreateWalletReq(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
   const { transferPin } = req.body;
@@ -61,6 +62,8 @@ interface FundWalletResponse {
   transactionId: string;
 }
 
-export const fundWallet: RequestHandler<any, FundWalletResponse> = async (req, res, next) => {
-  
-}
+export const fundWallet: RequestHandler<any, FundWalletResponse> = async (
+  req,
+  res,
+  next
+) => {};

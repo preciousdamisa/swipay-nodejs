@@ -11,12 +11,14 @@ const db_1 = __importDefault(require("./main/db"));
 const user_1 = __importDefault(require("./routes/user/user"));
 const auth_1 = __importDefault(require("./routes/user/auth"));
 const wallet_1 = __importDefault(require("./routes/wallet"));
+const transaction_1 = __importDefault(require("./routes/transaction"));
 const app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use('/api/users', user_1.default);
 app.use('/api/auth', auth_1.default);
 app.use('/api/wallets', wallet_1.default);
+app.use('/api/transactions', transaction_1.default);
 app.use(error_1.default);
 db_1.default((db, err) => {
     if (!err) {

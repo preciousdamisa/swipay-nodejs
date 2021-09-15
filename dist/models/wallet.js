@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateCreateWalletData = void 0;
+exports.validateCreateWalletReq = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const schema = new mongoose_1.Schema({
@@ -35,10 +35,10 @@ const schema = new mongoose_1.Schema({
     balance: { type: Number, min: 0.0, max: 1000000.0, required: true },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('wallet', schema);
-function validateCreateWalletData(data) {
+function validateCreateWalletReq(data) {
     const schema = joi_1.default.object({
         transferPin: joi_1.default.string().trim().min(4).max(4).required(),
     });
     return schema.validate(data);
 }
-exports.validateCreateWalletData = validateCreateWalletData;
+exports.validateCreateWalletReq = validateCreateWalletReq;
