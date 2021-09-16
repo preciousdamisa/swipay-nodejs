@@ -8,5 +8,6 @@ const auth_1 = __importDefault(require("../middleware/auth"));
 const transaction_1 = require("../controllers/transaction");
 const router = express_1.default();
 router.get('/start-transaction', auth_1.default, transaction_1.startTransaction);
+router.get('/receiver-name/:receiverPhone', auth_1.default, transaction_1.getReceiverName);
 router.post('/finish-transaction', auth_1.default, transaction_1.finishTransaction);
 exports.default = router;

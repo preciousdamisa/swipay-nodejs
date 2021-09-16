@@ -30,10 +30,10 @@ export interface StartTransactionReq {
   receiverPhone: string;
 }
 
-export function validateStartTransactionReq(reqBody: StartTransactionReq) {
+export function validateStartTransactionReq(data: StartTransactionReq) {
   return Joi.object({
     receiverPhone: Joi.string().trim().min(11).max(11).required(),
-  }).validate(reqBody);
+  }).validate(data);
 }
 
 export interface FinishTransactionReq {
@@ -42,12 +42,22 @@ export interface FinishTransactionReq {
   transferPin: string;
 }
 
-export function validateFinishTransactionReq(reqBody: FinishTransactionReq) {
+export function validateFinishTransactionReq(data: FinishTransactionReq) {
   const schema = Joi.object({
     receiverPhone: Joi.string().trim().min(11).max(11).required(),
     amount: Joi.number().min(1.0).max(10000).required(),
     transferPin: Joi.string().trim().min(4).max(4).required(),
   });
 
-  return schema.validate(reqBody);
+  return schema.validate(data);
+}
+
+export interface GetReceiverNameParams {
+  receiverPhone: string;
+}
+
+export function validateGetReceiverNameReq(data: GetReceiverNameParams) {
+  return Joi.object({
+    receiverPhone: Joi.string().trim().min(11).max(11).required(),
+  }).validate(data);
 }

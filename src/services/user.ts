@@ -58,7 +58,7 @@ export async function checkKYCData(
     console.log(res.data);
 
     return { message: res.data.message, status: res.data.status };
-  } catch (err) {
+  } catch (err: any) {
     console.log(err.response.data);
     
     return {

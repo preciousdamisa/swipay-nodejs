@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateFinishTransactionReq = exports.validateStartTransactionReq = void 0;
+exports.validateGetReceiverNameReq = exports.validateFinishTransactionReq = exports.validateStartTransactionReq = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const schema = new mongoose_1.Schema({
@@ -37,18 +37,24 @@ const schema = new mongoose_1.Schema({
     },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Transaction', schema);
-function validateStartTransactionReq(reqBody) {
+function validateStartTransactionReq(data) {
     return joi_1.default.object({
         receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),
-    }).validate(reqBody);
+    }).validate(data);
 }
 exports.validateStartTransactionReq = validateStartTransactionReq;
-function validateFinishTransactionReq(reqBody) {
+function validateFinishTransactionReq(data) {
     const schema = joi_1.default.object({
         receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),
         amount: joi_1.default.number().min(1.0).max(10000).required(),
         transferPin: joi_1.default.string().trim().min(4).max(4).required(),
     });
-    return schema.validate(reqBody);
+    return schema.validate(data);
 }
 exports.validateFinishTransactionReq = validateFinishTransactionReq;
+function validateGetReceiverNameReq(data) {
+    return joi_1.default.object({
+        receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),
+    }).validate(data);
+}
+exports.validateGetReceiverNameReq = validateGetReceiverNameReq;

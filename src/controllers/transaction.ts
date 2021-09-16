@@ -5,8 +5,10 @@ import User from '../models/user';
 import Wallet from '../models/wallet';
 import Transaction, {
   validateStartTransactionReq,
+  validateGetReceiverNameReq,
   validateFinishTransactionReq,
   StartTransactionReq,
+  GetReceiverNameParams,
   FinishTransactionReq,
 } from '../models/transaction';
 
@@ -74,7 +76,9 @@ export const finishTransaction: RequestHandler<
   const { receiverPhone, amount, transferPin } = req.body;
 
   try {
-    const sender = await User.findById(senderUserId).select('name _id walletId');
+    const sender = await User.findById(senderUserId).select(
+      'name _id walletId'
+    );
     if (!sender) return res.status(404).send({ message: 'Sender not found' });
 
     const receiver = await User.findOne({ phone: receiverPhone }).select(
@@ -85,7 +89,9 @@ export const finishTransaction: RequestHandler<
         .status(404)
         .send({ message: 'No user with the given phone number' });
 
-    const senderWallet = await Wallet.findById(sender.walletId).select('_id transferPin balance');
+    const senderWallet = await Wallet.findById(sender.walletId).select(
+      '_id transferPin balance'
+    );
     if (!senderWallet)
       return res
         .status(404)
@@ -134,5 +140,47 @@ export const finishTransaction: RequestHandler<
     });
   } catch (e) {
     next(new Error('Error in completing transaction: ' + e));
+  }
+};
+
+interface GetReceiverNameRes {
+  message: string;
+  receiver?: { fullName: string };
+}
+
+export const getReceiverName: RequestHandler<
+  GetReceiverNameParams,
+  GetReceiverNameRes
+> = async (req, res, next) => {
+  const { error } = validateGetReceiverNameReq(req.params);
+  if (error) return res.status(422).send({ message: error.details[0].message });
+
+  try {
+    const wallet = await Wallet.findOne({
+      phone: req.params.receiverPhone,
+    })
+      .populate('user', 'name')
+      .select('user -_id');
+
+    console.log(wallet);
+
+    // Receiver hasn't done KYC
+    if (!wallet.user.name)
+      return res
+        .status(400)
+        .send({ message: "Receiver's account hasn't been verified" });
+
+    if (!wallet)
+      return res
+        .status(404)
+        .send({ message: 'No wallet with the given phone number' });
+
+    const { first, middle, last } = wallet.user.name;
+
+    const receiver = { fullName: `${first} ${middle} ${last}` };
+
+    res.send({ message: "Receiver's name gotten successfully", receiver });
+  } catch (e) {
+    next(new Error('Error in adding user: ' + e));
   }
 };

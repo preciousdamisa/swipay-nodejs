@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.finishTransaction = exports.startTransaction = void 0;
+exports.getReceiverName = exports.finishTransaction = exports.startTransaction = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importDefault(require("../models/user"));
 const wallet_1 = __importDefault(require("../models/wallet"));
@@ -110,3 +110,32 @@ const finishTransaction = async (req, res, next) => {
     }
 };
 exports.finishTransaction = finishTransaction;
+const getReceiverName = async (req, res, next) => {
+    const { error } = transaction_1.validateGetReceiverNameReq(req.params);
+    if (error)
+        return res.status(422).send({ message: error.details[0].message });
+    try {
+        const wallet = await wallet_1.default.findOne({
+            phone: req.params.receiverPhone,
+        })
+            .populate('user', 'name')
+            .select('user -_id');
+        console.log(wallet);
+        // Receiver hasn't done KYC
+        if (!wallet.user.name)
+            return res
+                .status(400)
+                .send({ message: "Receiver's account hasn't been verified" });
+        if (!wallet)
+            return res
+                .status(404)
+                .send({ message: 'No wallet with the given phone number' });
+        const { first, middle, last } = wallet.user.name;
+        const receiver = { fullName: `${first} ${middle} ${last}` };
+        res.send({ message: "Receiver's name gotten successfully", receiver });
+    }
+    catch (e) {
+        next(new Error('Error in adding user: ' + e));
+    }
+};
+exports.getReceiverName = getReceiverName;
