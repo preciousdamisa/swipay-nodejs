@@ -120,22 +120,21 @@ const getReceiverName = async (req, res, next) => {
         })
             .populate('user', 'name')
             .select('user -_id');
-        console.log(wallet);
+        if (!wallet)
+            return res
+                .status(404)
+                .send({ message: 'No wallet with the given phone number' });
         // Receiver hasn't done KYC
         if (!wallet.user.name)
             return res
                 .status(400)
                 .send({ message: "Receiver's account hasn't been verified" });
-        if (!wallet)
-            return res
-                .status(404)
-                .send({ message: 'No wallet with the given phone number' });
         const { first, middle, last } = wallet.user.name;
         const receiver = { fullName: `${first} ${middle} ${last}` };
         res.send({ message: "Receiver's name gotten successfully", receiver });
     }
     catch (e) {
-        next(new Error('Error in adding user: ' + e));
+        next(new Error("Error in getting receiver's name: " + e));
     }
 };
 exports.getReceiverName = getReceiverName;
