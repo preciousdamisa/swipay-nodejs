@@ -22,23 +22,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateCreateWalletReq = void 0;
+exports.validateGetOwnerReq = exports.validateCreateWalletReq = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const schema = new mongoose_1.Schema({
-    userId: { type: mongoose_1.Schema.Types.ObjectId, required: true, unique: true },
+    user: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        unique: true,
+        ref: 'User',
+    },
     transferPin: {
         type: String,
         trim: true,
         required: true,
     },
     balance: { type: Number, min: 0.0, max: 1000000.0, required: true },
+    phone: {
+        type: String,
+        trim: true,
+        minLength: 11,
+        maxLength: 11,
+        unique: true,
+        required: true,
+    },
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('wallet', schema);
-function validateCreateWalletReq(data) {
-    const schema = joi_1.default.object({
+exports.default = mongoose_1.default.model('Wallet', schema);
+function validateCreateWalletReq(reqBody) {
+    return joi_1.default.object({
         transferPin: joi_1.default.string().trim().min(4).max(4).required(),
-    });
-    return schema.validate(data);
+    }).validate(reqBody);
 }
 exports.validateCreateWalletReq = validateCreateWalletReq;
+function validateGetOwnerReq(reqBody) {
+    return joi_1.default.object({
+        walletPhone: joi_1.default.string().trim().min(11).max(11).required(),
+    }).validate(reqBody);
+}
+exports.validateGetOwnerReq = validateGetOwnerReq;

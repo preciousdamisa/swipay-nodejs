@@ -36,7 +36,7 @@ const schema = new mongoose_1.Schema({
         enum: ['Airtime', 'Transportation', 'School Fee', 'Other'],
     },
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('transaction', schema);
+exports.default = mongoose_1.default.model('Transaction', schema);
 function validateStartTransactionReq(reqBody) {
     return joi_1.default.object({
         receiverPhone: joi_1.default.string().trim().min(11).max(11).required(),

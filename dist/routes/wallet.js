@@ -9,4 +9,5 @@ const wallet_1 = require("../controllers/wallet");
 const router = express_1.default();
 router.post('/', auth_1.default, wallet_1.createWallet);
 router.put('/fund', auth_1.default, wallet_1.fundWallet);
+router.get('/owner', auth_1.default, wallet_1.getOwner);
 exports.default = router;

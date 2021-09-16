@@ -4,6 +4,7 @@ import * as Jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
 import nameSchema, { Name } from './schemas/name';
+import phoneSchema from './schemas/phone';
 import addressSchema, { Address } from './schemas/address';
 
 interface User {
@@ -78,7 +79,7 @@ schema.methods.genAuthToken = function () {
   );
 };
 
-export default mongoose.model('user', schema);
+export default mongoose.model('User', schema);
 
 export interface SignupData {
   email: string;

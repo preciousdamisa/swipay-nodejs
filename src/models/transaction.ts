@@ -24,7 +24,7 @@ const schema = new Schema<Transaction>(
   { timestamps: true }
 );
 
-export default mongoose.model('transaction', schema);
+export default mongoose.model('Transaction', schema);
 
 export interface StartTransactionReq {
   receiverPhone: string;

@@ -78,7 +78,7 @@ schema.methods.genAuthToken = function () {
         email: this.email,
     }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '1h' });
 };
-exports.default = mongoose_1.default.model('user', schema);
+exports.default = mongoose_1.default.model('User', schema);
 function validateSignupData(data) {
     const schema = joi_1.default.object({
         email: joi_1.default.string()
