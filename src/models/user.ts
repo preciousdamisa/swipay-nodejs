@@ -4,7 +4,6 @@ import * as Jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
 import nameSchema, { Name } from './schemas/name';
-import phoneSchema from './schemas/phone';
 import addressSchema, { Address } from './schemas/address';
 
 interface User {
@@ -16,7 +15,7 @@ interface User {
   password: string;
   address: Address;
   dob: { date: Date };
-  referrer: { code: string; userId: string };
+  referrer: string;
   externalBank: { name: string; accountNumber: string; bankCode: string };
   walletId: string;
 }
@@ -47,22 +46,13 @@ const schema = new Schema<User>(
     dob: {
       date: Date,
     },
-    referrer: {
-      code: {
-        type: String,
-        trim: true,
-        minLength: 6,
-        maxLength: 6,
-        required: true,
-      },
-      userId: Schema.Types.ObjectId,
-    },
+    referrer: { type: Schema.Types.ObjectId, required: true },
     externalBank: {
       name: { type: String, trim: true, minLength: 2, maxLength: 50 },
       accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
       bankCode: { type: String, trim: true, minLength: 3, maxLength: 3 },
     },
-    walletId: Schema.Types.ObjectId,
+    walletId: { type: Schema.Types.ObjectId, ref: 'Wallet' },
   },
   { timestamps: true }
 );

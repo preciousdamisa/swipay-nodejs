@@ -56,7 +56,7 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
       email,
       phone,
       password: hashedPw,
-      referrer: { code: refCode, userId: referrer._id },
+      referrer: referrer._id,
     }).save();
 
     res.status(201).send({
